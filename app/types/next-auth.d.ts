@@ -10,4 +10,7 @@ declare module "next-auth" {
       accessToken: string;
     };
   }
+  interface User extends NextAuthUser {
+    accessToken: string;
+  }
 }

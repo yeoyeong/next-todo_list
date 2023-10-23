@@ -1,49 +1,67 @@
 "use client";
-import { useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import SignInButton from "./components/SignInButton";
+import WriteButton from "./components/WriteButton";
 import { useEffect, useState } from "react";
+import { useGetTodoList } from "@/utils/queries/useGetTodoList";
+import DeleteButton from "./components/DeleteButton";
+import { usePatchTodoList } from "@/utils/queries/usePatchTodoList";
+import EditButton from "./components/EditButton";
 
+// async function getData() {
+//   const res = await fetch(`http://localhost:3000/api/user/1`);
+//   if (!res.ok) {
+//     throw new Error("Failed to fetch data");
+//   }
+//   return res.json();
+// }
+// export default async function Home() {
+//   const session = await getServerSession();
+//   const data = await getData();
+//   return <>s</>;
+// }
 export default function Home() {
+  // const [userPosts, setUserPosts] = useState([]);
   const { data } = useSession();
-  // console.log(data.user.accessToken);
-  const [userPosts, setUserPosts] = useState([]);
-  const requestHeaders: HeadersInit = new Headers();
-  requestHeaders.set("Content-Type", "application/json");
-  requestHeaders.set("Authorization", data ? data.user.accessToken : "");
-  useEffect(() => {
-    const todolist = async () => {
-      if (!data) return;
-      try {
-        const res = await fetch(
-          `http://localhost:3000/api/user/${data.user.id}`,
-          {
-            method: "GET",
-            headers: requestHeaders,
-          }
-        ).then((res) => res.json());
-        setUserPosts(res.userPosts);
-      } catch (err: any) {
-        console.log(err);
-      }
-    };
-    todolist();
-  }, [data]);
 
-  if (userPosts) {
-    return (
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
-        <SignInButton />
-        <div>
-          {userPosts.map((el: any) => (
-            <p key={el.id}>{el.title}</p>
-          ))}
-        </div>
-      </main>
-    );
-  }
+  const { data: todoListData, isSuccess } = useGetTodoList(
+    data?.user.id,
+    data?.user.accessToken
+  );
+
+  const [editModeList, setEditModeList] = useState<number[]>([]);
+  const [editValue, setEditValue] = useState<{ [key: string]: string }>({});
+  const valueOnChange = (e: any) => {
+    setEditValue({ ...editValue, [e.target.id]: e.target.value });
+  };
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <WriteButton />
       <SignInButton />
+      {isSuccess &&
+        todoListData.userPosts &&
+        todoListData.userPosts.map((el: any, idx: number) => (
+          <div key={el.id}>
+            {editModeList.includes(el.id) ? (
+              <input
+                type="text"
+                defaultValue={el.title}
+                id={el.id}
+                onChange={valueOnChange}
+              />
+            ) : (
+              <span>{el.title}</span>
+            )}
+            <DeleteButton postId={el.id} />
+            <EditButton
+              postId={el.id}
+              editModeList={editModeList}
+              setEditModeList={setEditModeList}
+              editValue={editValue}
+            />
+          </div>
+        ))}
     </main>
   );
 }

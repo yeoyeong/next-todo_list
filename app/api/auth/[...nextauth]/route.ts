@@ -1,3 +1,5 @@
+import { Session } from "next-auth";
+import { JWT } from "next-auth/jwt";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -33,7 +35,7 @@ const handler = NextAuth({
         });
 
         const user = await res.json();
-        console.log(user);
+
         if (user) {
           return user;
         } else {
@@ -44,13 +46,30 @@ const handler = NextAuth({
   ],
   callbacks: {
     async jwt({ token, user }) {
-      return { ...token, ...user };
+      if (user) {
+        // 로그인 성공 시 user 정보가 전달됩니다.
+        token = { ...user };
+        token.accessToken = user.accessToken; // 이 때 accessToken을 token에 추가합니다.
+      }
+      console.log(token);
+      return token;
+      // return { ...token, ...user };
     },
 
     async session({ session, token }) {
       session.user = token as any;
       return session;
     },
+    // async jwt({ user, token }) {
+    //   const newToken = { ...token };
+    //   if (user?.role) {
+    //     newToken.role = user.role;
+    //   }
+    //   if (user?.id) {
+    //     newToken.id = user.id;
+    //   }
+    //   return newToken;
+    // },
   },
   pages: {
     signIn: "/signin",
