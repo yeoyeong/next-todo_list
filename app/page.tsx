@@ -5,9 +5,9 @@ import WriteButton from "./components/WriteButton";
 import { useEffect, useState } from "react";
 import { useGetTodoList } from "@/utils/queries/useGetTodoList";
 import DeleteButton from "./components/DeleteButton";
-import { usePatchTodoList } from "@/utils/queries/usePatchTodoList";
 import EditButton from "./components/EditButton";
-
+import styles from "./styles/home.module.css";
+import MoveItem from "./components/MoveItem";
 // async function getData() {
 //   const res = await fetch(`http://localhost:3000/api/user/1`);
 //   if (!res.ok) {
@@ -36,32 +36,79 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <div className="flex min-h-screen flex-col items-center justify-between p-24">
       <WriteButton />
       <SignInButton />
-      {isSuccess &&
-        todoListData.userPosts &&
-        todoListData.userPosts.map((el: any, idx: number) => (
-          <div key={el.id}>
-            {editModeList.includes(el.id) ? (
-              <input
-                type="text"
-                defaultValue={el.title}
-                id={el.id}
-                onChange={valueOnChange}
-              />
-            ) : (
-              <span>{el.title}</span>
-            )}
-            <DeleteButton postId={el.id} />
-            <EditButton
-              postId={el.id}
-              editModeList={editModeList}
-              setEditModeList={setEditModeList}
-              editValue={editValue}
-            />
-          </div>
-        ))}
-    </main>
+      <div className="flex gap-x-20">
+        <section className={styles.todolist_before_wrap}>
+          {isSuccess &&
+            todoListData.userPosts &&
+            todoListData.userPosts.map((el: any, idx: number) => {
+              if (!el.published) {
+                return (
+                  <div key={el.id} className={styles.todo_item}>
+                    <div>
+                      {editModeList.includes(el.id) ? (
+                        <input
+                          type="text"
+                          defaultValue={el.title}
+                          id={el.id}
+                          onChange={valueOnChange}
+                        />
+                      ) : (
+                        <span>{el.title}</span>
+                      )}
+                      <EditButton
+                        postId={el.id}
+                        editModeList={editModeList}
+                        setEditModeList={setEditModeList}
+                        editValue={editValue}
+                      />
+                    </div>
+                    <div className={styles.button_wrap}>
+                      <DeleteButton postId={el.id} />
+                      <MoveItem itemState={el.published} postId={el.id} />
+                    </div>
+                  </div>
+                );
+              }
+            })}
+        </section>
+        <section className={styles.todolist_success_wrap}>
+          {isSuccess &&
+            todoListData.userPosts &&
+            todoListData.userPosts.map((el: any, idx: number) => {
+              if (el.published) {
+                return (
+                  <div key={el.id} className={styles.todo_item}>
+                    <div>
+                      {editModeList.includes(el.id) ? (
+                        <input
+                          type="text"
+                          defaultValue={el.title}
+                          id={el.id}
+                          onChange={valueOnChange}
+                        />
+                      ) : (
+                        <span>{el.title}</span>
+                      )}
+                      <EditButton
+                        postId={el.id}
+                        editModeList={editModeList}
+                        setEditModeList={setEditModeList}
+                        editValue={editValue}
+                      />
+                    </div>
+                    <div className={styles.button_wrap}>
+                      <DeleteButton postId={el.id} />
+                      <MoveItem itemState={el.published} postId={el.id} />
+                    </div>
+                  </div>
+                );
+              }
+            })}
+        </section>
+      </div>
+    </div>
   );
 }

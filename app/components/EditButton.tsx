@@ -1,3 +1,4 @@
+import { usePatchStateTodo } from "@/utils/queries/usePatchStateTodo";
 import { usePatchTodoList } from "@/utils/queries/usePatchTodoList";
 import { useSession } from "next-auth/react";
 import React from "react";
@@ -37,9 +38,6 @@ const EditButton = (props: Props) => {
     dataFetchFnc(fetchData);
   };
 
-  // const WriteHandler = async () => {
-
-  // };
   const dataFetchFnc = async (fetchData: {
     value: string;
     id: number;
@@ -63,7 +61,7 @@ const EditButton = (props: Props) => {
     <div>
       {editModeList.includes(postId) ? (
         <span>
-          <button onClick={() => editSubmitHandler(postId)}>완료</button>
+          <button onClick={() => editSubmitHandler(postId)}>수정</button>
           <button onClick={() => editChangeHandler(postId)}>취소</button>
         </span>
       ) : (

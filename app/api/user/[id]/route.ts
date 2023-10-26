@@ -93,7 +93,7 @@ export async function PATCH(
   let PatchId = url.searchParams.get("patch"); // 파람즈의 patch 값을 가져옴
   const { value } = await request.json();
 
-  const deletePosts = await prisma.todoBefore.update({
+  const patchPosts = await prisma.todoBefore.update({
     where: {
       id: Number(PatchId),
     },
@@ -101,5 +101,5 @@ export async function PATCH(
       title: value,
     },
   });
-  return new Response(JSON.stringify({ deletePosts }));
+  return new Response(JSON.stringify({ patchPosts }));
 }

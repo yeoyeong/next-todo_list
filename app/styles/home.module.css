@@ -1,0 +1,35 @@
+.todolist_before_wrap{
+    border-radius: 5px;
+    border:1px solid rgb(187, 186, 186)
+}
+.todolist_success_wrap{
+    border-radius: 5px;
+    border:1px solid rgb(187, 186, 186)
+}
+
+.todo_item{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 300px;
+    height: 50px;
+    text-align: center;
+    padding: 0 20px;
+    background-color:skyblue;
+    border-bottom: 1px solid rgb(130, 162, 174);
+}
+
+.button_wrap {
+    display: none;
+    gap: 20px;
+}
+.button_wrap > button {
+    cursor: pointer;
+}
+.todo_item:hover{
+    background-color:rgb(130, 162, 174);
+}
+.todo_item:hover > .button_wrap {
+    display: flex;
+
+}
